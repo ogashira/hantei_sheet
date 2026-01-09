@@ -1,4 +1,6 @@
 import sys
+import yaml
+from typing import Dict
 from user_interface import UserInterface
 from create_kensa_hinban_instance import CreateKensaHinbanInstance
 from select_data import *
@@ -29,9 +31,28 @@ class Controller:
         df_hantei: pd.DataFrame = DL_data.fetch_data()
         df_hantei = df_hantei.fillna('-')
 
-        kensaHinbans: List[KensaHinban] = []
-        kensaHinbans = CreateKensaHinbanInstance.create(df_yotei, df_hantei)
+        # hantei_sheet.yamlを得る。メタルのクリヤに対するmixの対応表
+        # 対応表に載ってるクリヤがあったら下表にmixを追加する
+        yaml_path:str = r'//192.168.1.247/共有/技術課ﾌｫﾙﾀﾞ/' \
+                        r'200. effit_data/ﾏｽﾀ/hantei_sheet.yaml'
+        try:
+            with open(yaml_path, 'r', encoding='utf-8') as file:
+                hantei_yaml = yaml.safe_load(file)
+        except FileNotFoundError:
+            print(f'エラー："{yaml_path}"が見つかりません')
+            sys.exit()
+        except yaml.YAMLError as exc:
+            print(f'yamlファイルのパース中にエラー出ました:{exc}')
+            sys.exit()
+        except Exception as e:
+            print(f'yamlファイルのパース中にエラー出ました:{e}')
+            sys.exit()
 
+        add_mix_metal:Dict = hantei_yaml['add_mix_metal']
+
+        kensaHinbans: List[KensaHinban] = []
+        kensaHinbans = CreateKensaHinbanInstance.create(df_yotei, 
+                                               df_hantei, add_mix_metal)
 
 
         excel:Excel = Excel(kensaHinbans, sz_yt_date)

@@ -12,6 +12,7 @@ class KensaHinban:
         self.__net = yotei_info['net']
         self.__cans = yotei_info['cans']
 
+
         # 桁を揃える 数値に変換出来ない場合は''
         try:
             actual_vis_min = f"{float(spec_info['actual_vis_min']):.1f}"
@@ -130,7 +131,4 @@ class KensaHinban:
             ws.cell(row=standerd_row + 4, column=8).value = ''
             ws.cell(row=standerd_row + 5, column=8).value = ''
             ws.cell(row=standerd_row + 6, column=8).value = ''
-
-
-
 
