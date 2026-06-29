@@ -1,5 +1,6 @@
 import sys
 import yaml
+import platform
 from typing import Dict
 from user_interface import UserInterface
 from create_kensa_hinban_instance import CreateKensaHinbanInstance
@@ -35,6 +36,10 @@ class Controller:
         # 対応表に載ってるクリヤがあったら下表にmixを追加する
         yaml_path:str = r'//192.168.1.247/共有/技術課ﾌｫﾙﾀﾞ/' \
                         r'200. effit_data/ﾏｽﾀ/hantei_sheet.yaml'
+        if platform.system() == 'Linux':
+            yaml_path:str = r'/mnt/public/技術課ﾌｫﾙﾀﾞ/' \
+                        r'200. effit_data/ﾏｽﾀ/hantei_sheet.yaml'
+
         try:
             with open(yaml_path, 'r', encoding='utf-8') as file:
                 hantei_yaml = yaml.safe_load(file)
@@ -54,7 +59,9 @@ class Controller:
         kensaHinbans = CreateKensaHinbanInstance.create(df_yotei, 
                                                df_hantei, add_mix_metal)
 
+        if not kensaHinbans:
+            print("この製造予定日での検査製品はありません")
+            sys.exit()
+
 
         excel:Excel = Excel(kensaHinbans, sz_yt_date)
-
-

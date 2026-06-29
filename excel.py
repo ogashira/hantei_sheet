@@ -9,6 +9,7 @@ from openpyxl.styles.fonts import Font
 from openpyxl.utils import get_column_letter
 from openpyxl.drawing.image import Image
 from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.worksheet.cell_range import CellRange
 from kensa_hinban import KensaHinban
 
 
@@ -147,8 +148,13 @@ class Excel:
         # print設定
         CM:float = 1 / 2.54 # センチメートル 使っていない
         max_row:int = self.__lastRow
-        print_area:str = 'A1:H' + str(max_row)
-        self.ws.print_area = print_area 
+        if max_row <=0:
+            max_row = 12
+
+
+        print_area_str: str = 'A1:H' + str(max_row)
+
+        self.ws.print_area = print_area_str
 
 
     def save_file(self)->None:
